@@ -42,7 +42,7 @@ from telegram.ext import (
 )
 
 # ─── Настройки ──────────────────────────────────────────────────────────────
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+BOT_TOKEN = "ВАШ_ТОКЕН_ЗДЕСЬ"   # <- вставь токен от @BotFather
 DB_FILE   = "expenses.db"
 DEFAULT_CURRENCY = "₽"
 
