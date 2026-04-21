@@ -28,6 +28,17 @@ import sqlite3
 import csv
 import io
 import os
+from flask import Flask
+import threading
+
+app = Flask('')
+
+@app.route('/')
+def home():
+    return "Бот работает!"
+
+def run_web():
+    app.run(host='0.0.0.0', port=8080)
 from datetime import datetime, date, timedelta
 from calendar import monthrange
 from collections import defaultdict
@@ -1690,6 +1701,7 @@ def main():
     
     # Подключаем твой обработчик диалогов
     application.add_handler(build_conv_handler())
+  threading.Thread(target=run_web, daemon=True).start()
 
     # Настройка напоминалки (18:00 UTC = 21:00 по МСК)
     if application.job_queue:
