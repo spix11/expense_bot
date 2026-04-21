@@ -1676,20 +1676,39 @@ def build_conv_handler():
     )
 
 
+async def send_reminder(context: ContextTypes.DEFAULT_TYPE):
+    """Функция для отправки напоминания"""
+    try:
+        # ЗАМЕНИ 861111111 на свой ID из бота @userinfobot
+        await context.bot.send_message(chat_id=861111111, text="🔔 Тимур, пора записать расходы за сегодня!")
+    except Exception as e:
+        print(f"Ошибка при отправке напоминания: {e}")
+
 def main():
-    if BOT_TOKEN == "ВАШ_ТОКЕН_ЗДЕСЬ":
-        print("❌ Ошибка: вставь токен бота в переменную BOT_TOKEN!")
-        return
+    # Создаем приложение. Токен берется из настроек Render (Environment)
+    application = Application.builder().token(BOT_TOKEN).build()
+    
+    # Подключаем твой обработчик диалогов
+    application.add_handler(build_conv_handler())
 
-    init_db()
-    print("✅ База данных инициализирована.")
+    # Настройка напоминалки (18:00 UTC = 21:00 по МСК)
+    if application.job_queue:
+        application.job_queue.run_daily(
+            send_reminder, 
+            time=datetime.strptime("18:00", "%H:%M").time()
+        )
 
-    app = Application.builder().token(BOT_TOKEN).build()
-    app.add_handler(build_conv_handler())
-
-    print("🤖 Бот запущен. Ctrl+C для остановки.")
-    app.run_polling(allowed_updates=Update.ALL_TYPES)
-
+    # Исправление ошибки запуска (event loop) для Python 3.14 на Render
+    import asyncio
+    try:
+        loop = asyncio.get_event_loop()
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+    
+    print("🤖 Бот успешно запущен и готов к работе!")
+    application.run_polling(allowed_updates=Update.ALL_TYPES)
 
 if __name__ == "__main__":
+    init_db()  # Инициализируем базу данных перед запуском
     main()
