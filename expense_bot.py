@@ -1698,15 +1698,15 @@ async def send_reminder(context: ContextTypes.DEFAULT_TYPE):
 def main():
     # Создаем приложение. Токен берется из настроек Render (Environment)
     application = Application.builder().token(BOT_TOKEN).build()
-    
+
     # Подключаем твой обработчик диалогов
     application.add_handler(build_conv_handler())
-  threading.Thread(target=run_web, daemon=True).start()
+    threading.Thread(target=run_web, daemon=True).start()
 
     # Настройка напоминалки (18:00 UTC = 21:00 по МСК)
     if application.job_queue:
         application.job_queue.run_daily(
-            send_reminder, 
+            send_reminder,
             time=datetime.strptime("18:00", "%H:%M").time()
         )
 
@@ -1717,7 +1717,7 @@ def main():
     except RuntimeError:
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
-    
+
     print("🤖 Бот успешно запущен и готов к работе!")
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
